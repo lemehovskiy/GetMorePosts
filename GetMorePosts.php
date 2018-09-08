@@ -20,23 +20,13 @@ class GetMorePosts
     {
         $debug = true;
         $response = [];
-        $error = false;
 
         try {
             is_valid_args(array(
                 'args' => $this->args,
                 'validation_config' => $this->validation_config,
             ));
-        }
-        catch (Exception $e){
-            $error = true;
 
-            if ($debug) {
-                $response['error'] = $e->getMessage();
-            }
-        }
-
-        if (!$error) {
             $the_query = new WP_Query($this->args);
             $response['foundPosts'] = $the_query->found_posts;
 
@@ -48,6 +38,11 @@ class GetMorePosts
                 endwhile;
             endif;
             wp_reset_postdata();
+        }
+        catch (Exception $e){
+            if ($debug) {
+                $response['error'] = $e->getMessage();
+            }
         }
 
         echo json_encode($response);
