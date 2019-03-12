@@ -8,7 +8,6 @@ class GetMorePosts
     {
         $this->validation_config = $config['validation_config'];
         $this->action = $config['action'];
-        $this->args = $_POST['args'];
         $this->layout_function_name = $config['layout_function_name'];
         $this->layout_function_arg = $config['layout_function_arg'];
 
@@ -20,14 +19,18 @@ class GetMorePosts
     {
         $debug = true;
         $response = [];
+        $args = $_POST['args'];
 
         try {
             is_valid_args(array(
-                'args' => $this->args,
+                'args' => $args,
                 'validation_config' => $this->validation_config,
             ));
 
-            $the_query = new WP_Query($this->args);
+
+            $the_query = new WP_Query($args);
+            $response['args'] = $args;
+            $response['validation_config'] = $this->validation_config;
             $response['foundPosts'] = $the_query->found_posts;
 
             if ($the_query->have_posts()) :
