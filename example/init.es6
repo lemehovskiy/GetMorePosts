@@ -36,6 +36,16 @@
             $(this).addClass('no-more-posts');
         })
 
+        $loadMoreBtn.on('loadMorePost.beforeSend', function(){
+            $(this).text('Loading ...')
+            $(this).addClass('loading');
+        })
+
+        $loadMoreBtn.on('loadMorePost.success loadMorePost.error', function(){
+            $(this).text('See more')
+            $(this).removeClass('loading');
+        })
+
 
     });
 

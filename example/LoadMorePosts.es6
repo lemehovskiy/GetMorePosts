@@ -34,33 +34,49 @@
                 },
 
                 beforeSend: function () {
-                    self.state.isAjaxLoading = true;
+                    self.beforeSend();
                 },
                 success: function (data) {
-                    self.state.isAjaxLoading = false;
-
-                    data = JSON.parse(data);
-
-                    console.log(data);
-
-                    if (self.state.foundPosts === null) {
-                        self.state.foundPosts = data.foundPosts;
-                    }
-
-                    self.state.args.offset += self.state.args.posts_per_page;
-
-                    if (self.state.args.offset >= self.state.foundPosts) {
-                        self.handleNoMorePosts();
-                    }
-
-                    self.settings.onLoad(data);
-
+                    self.onSuccess(data);
                 },
                 error: function (data) {
-                    self.state.isAjaxLoading = false;
-                    console.error("load more error!");
+                    self.onError();
                 }
             });
+        }
+
+        beforeSend(){
+            this.state.isAjaxLoading = true;
+            this.$element.trigger('loadMorePost.beforeSend');
+        }
+
+        onSuccess(data){
+            let self = this;
+
+            self.state.isAjaxLoading = false;
+            this.$element.trigger('loadMorePost.success');
+
+
+            data = JSON.parse(data);
+
+            if (self.state.foundPosts === null) {
+                self.state.foundPosts = data.foundPosts;
+            }
+
+            self.state.args.offset += self.state.args.posts_per_page;
+
+            if (self.state.args.offset >= self.state.foundPosts) {
+                self.handleNoMorePosts();
+            }
+
+            self.settings.onLoad(data);
+        }
+
+        onError(){
+            this.$element.trigger('loadMorePost.error');
+
+            self.state.isAjaxLoading = false;
+            console.error("load more error!");
         }
 
         handleNoMorePosts(){
